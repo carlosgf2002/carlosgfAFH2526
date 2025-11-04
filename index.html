@@ -362,23 +362,17 @@
   </script>
   <br>
   <br>
-    <title>Tarea: Conexión remota - Carlos González</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
-        h1, h2 { color: #003366; }
-        pre { background: #eaeaea; padding: 10px; border-radius: 5px; }
-        section { margin-bottom: 2em; }
-    </style>
-    <h1>Tarea: Conexión remota<br><small>Carlos González</small></h1>
+   <title>Tarea: Conexión remota - Carlos González</title>
+   <h1>Tarea: Conexión remota<br><small>Carlos González</small></h1>
     
     <section>
         <h2>Ejercicio 1: Añadir usuario y comprobar SSH en Ubuntu</h2>
         <pre>
 sudo adduser carlosgonzalez
-# Sigue el asistente para la contraseña y datos.
 sudo systemctl status ssh
         </pre>
-        <p>Comprueba el estado del servidor SSH (debe estar activo y escuchando en el puerto 22).</p>
+        <p>Captura del proceso en Ubuntu:</p>
+        <img src="captura-ssh.png" alt="Captura del usuario en Ubuntu y SSH">
     </section>
     
     <section>
@@ -388,6 +382,8 @@ sudo systemctl status ssh
             <li>Introduce la IP de tu servidor Ubuntu y el puerto 22.</li>
             <li>Entra como usuario <b>carlosgonzalez</b>.</li>
         </ol>
+        <p>Captura de inicio de sesión:</p>
+        <img src="putty-inicio-sesion.png" alt="Inicio de sesión en PuTTY">
     </section>
 
     <section>
@@ -396,7 +392,8 @@ sudo systemctl status ssh
 ssh-keygen -t rsa -b 4096
 ssh-copy-id carlosgonzalez@192.168.10.2
         </pre>
-        <p>Con esto, podrás entrar sin pedir contraseña cada vez.</p>
+        <p>Captura de la autenticación:</p>
+        <img src="clave-ssh.png" alt="Clave SSH generada">
     </section>
 
     <section>
@@ -406,6 +403,7 @@ ssh-copy-id carlosgonzalez@192.168.10.2
             <li>Seleccionar usuarios autorizados.</li>
             <li>Usar la aplicación de Escritorio Remoto para conectarse desde otro equipo.</li>
         </ul>
+        <img src="escritorio-remoto.png" alt="Propiedades del sistema y Escritorio remoto">
     </section>
 
     <section>
@@ -415,6 +413,7 @@ ssh-copy-id carlosgonzalez@192.168.10.2
             <li>De Ubuntu a Windows</li>
             <li>Del móvil a Windows</li>
         </ul>
+        <img src="muestra-conexion-remota.png" alt="Ejemplo conexiones remotas">
     </section>
 </body>
 </html>
