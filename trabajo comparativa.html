@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Comparativa de Modelos IA – macOS vs Windows</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Librería para las gráficas (Chart.js desde CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #020617;
+      --card: #0b1120;
+      --accent: #38bdf8;
+      --mac: #22c55e;
+      --win: #f97316;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: #1f2937;
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top, #1f2937 0, #020617 55%, #000 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 1.6rem 6vw 1.2rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(15,23,42,0.9);
+      backdrop-filter: blur(18px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.7rem;
+      letter-spacing: 0.04em;
+    }
+
+    header p {
+      margin: 0.35rem 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 1.8rem 6vw 2.4rem;
+    }
+
+    section {
+      margin-bottom: 1.8rem;
+      background: linear-gradient(145deg, rgba(15,23,42,0.97), rgba(15,23,42,0.88));
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 1.4rem 1.5rem 1.3rem;
+      box-shadow: 0 22px 45px rgba(15,23,42,0.88);
+    }
+
+    h2 {
+      margin: 0 0 0.7rem;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .pill {
+      font-size: 0.75rem;
+      padding: 0.12rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+      color: var(--muted);
+    }
+
+    p {
+      margin: 0 0 0.85rem;
+      font-size: 0.94rem;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      gap: 1.1rem;
+    }
+
+    @media (min-width: 900px) {
+      .grid-2 { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.9fr); }
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.18rem;
+      min-width: 150px;
+    }
+
+    label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+
+    select {
+      background: #020617;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 0.42rem 0.9rem;
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(56,189,248,0.4);
+    }
+
+    select[multiple] {
+      border-radius: 10px;
+      padding: 0.3rem 0.5rem;
+      height: 90px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 0.3rem;
+    }
+
+    th, td {
+      padding: 0.45rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    th {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: rgba(15,23,42,0.9); }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.12rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 0.72rem;
+      color: var(--muted);
+      background: #020617;
+    }
+    .tag.mac { border-color: rgba(34,197,94,0.6); color: var(--mac); }
+    .tag.win { border-color: rgba(249,115,22,0.6); color: var(--win); }
+
+    .chart-card {
+      background: radial-gradient(circle at top left, #0b1120 0, #020617 55%);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 0.9rem 0.9rem 0.8rem;
+      height: 100%;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      min-height: 230px;
+      margin-top: 0.2rem;
+    }
+
+    .legend-inline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.55rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .dot {
+      width: 10px; height: 10px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-right: 0.25rem;
+    }
+
+    footer {
+      padding: 0.9rem 6vw 1.2rem;
+      border-top: 1px solid var(--border);
+      background: #020617;
+      font-size: 0.82rem;
+      color: var(--muted);
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Comparación de modelos IA en macOS y Windows</h1>
+  <p>Rendimiento con adivinanzas: tiempo al primer token, velocidad de generación y consumo total de tokens.</p>
+</header>
+
+<main>
+  <!-- Sección prompts usados -->
+  <section>
+    <h2>Prompts utilizados <span class="pill">Definición de tarea</span></h2>
+
+    <h3 style="margin:0 0 0.4rem;font-size:1rem;">Prompt corto</h3>
+    <p style="margin-bottom:0.3rem;">
+      <strong>Texto:</strong> "Eres un experto en resolver y crear adivinanzas."
+    </p>
+    <p>
+      Este prompt es directo y sin instrucciones complejas. Evalúa cómo responden los modelos cuando la instrucción es
+      simple y no hay contexto elaborado, centrándose en la velocidad y en dar una respuesta clara y rápida.
+    </p>
+
+    <h3 style="margin:0.8rem 0 0.4rem;font-size:1rem;">Prompt largo</h3>
+    <p style="margin-bottom:0.3rem;">
+      <strong>Texto:</strong>
+    </p>
+    <p style="font-size:0.9rem;white-space:pre-line;background:#020617;border-radius:10px;border:1px solid var(--border);padding:0.6rem 0.8rem;">
+A partir de este momento actúas como una IA experta en adivinanzas, capaz tanto de crear acertijos originales como de resolver los que el usuario te presente. Tu comportamiento debe seguir estas reglas:
+Hablas como un maestro de acertijos: ingenioso, claro, creativo y ligeramente misterioso. Puedes usar metáforas, referencias poéticas, juegos de palabras y descripciones sensoriales. Mantienes un tono amistoso, curioso y retador.
+
+Cuando crees adivinanzas:
+1. Ofrece acertijos originales de distintos niveles: fácil, medio, difícil, lógico y narrativo.
+2. Estructura recomendada:
+   • Adivinanza de 3 a 8 líneas.
+   • Termina siempre con: "¿Qué crees que es?".
+3. No des la respuesta hasta que el usuario responda o la pida directamente.
+4. Si el usuario falla, da pistas progresivas sin revelar la solución antes de tiempo.
+
+Cuando resuelvas adivinanzas dadas por el usuario:
+1. Analiza la adivinanza paso a paso.
+2. Identifica pistas directas, metáforas, intenciones y giros lingüísticos.
+3. Propón una respuesta principal y, si es relevante, menciona alternativas, eligiendo la más probable.
+4. Explica brevemente tu razonamiento.
+5. Si la adivinanza es ambigua, pide aclaraciones.
+
+Flujo de interacción:
+• Si el usuario pide una adivinanza, créala.
+• Si el usuario envía una adivinanza, resuélvela.
+• Si el usuario pide dificultad, temática o estilo, adáptate.
+• Si el usuario quiere un duelo de acertijos, participa.
+
+Regla final: la experiencia debe sentirse como hablar con un sabio experto en enigmas.
+    </p>
+    <p>
+      Este prompt largo define un rol de “maestro de acertijos” muy detallado. Sirve para medir si los modelos mantienen el
+      personaje, crean y resuelven adivinanzas complejas, y gestionan pistas y respuestas de forma controlada.
+    </p>
+  </section>
+
+  <!-- Sección filtros + tabla -->
+  <section>
+    <h2>Datos detallados <span class="pill">Tabla filtrable</span></h2>
+    <p>
+      La tabla siguiente permite explorar todas las combinaciones de modelo, sistema operativo y tipo de prompt con las
+      tres adivinanzas base usadas para la comparación cuantitativa.
+    </p>
+
+    <div class="filters">
+      <div class="filter-group">
+        <label for="f-modelo">Modelo</label>
+        <select id="f-modelo">
+          <option value="ALL">Todos</option>
+          <option value="IBM Granite">IBM Granite 4.5 1B</option>
+          <option value="Mistral 7B">Mistral 7B</option>
+          <option value="Qwen 1.8B">Qwen 1.8B</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="f-so">Plataforma</label>
+        <select id="f-so">
+          <option value="ALL">macOS y Windows</option>
+          <option value="macOS">Solo macOS</option>
+          <option value="Windows">Solo Windows</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="f-prompt">Tipo de prompt</label>
+        <select id="f-prompt">
+          <option value="ALL">Corto y largo</option>
+          <option value="Corto">Prompt corto</option>
+          <option value="Largo">Prompt largo</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="f-adiv">Adivinanza</label>
+        <select id="f-adiv">
+          <option value="ALL">Todas</option>
+          <option value="1">1 – hierro, carne y acero</option>
+          <option value="2">2 – cuanto más le quitas…</option>
+          <option value="3">3 – ciudades, montañas y agua</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="chart-card" style="margin-top:0.4rem;">
+      <table id="tabla-datos">
+        <thead>
+          <tr>
+            <th>Modelo</th>
+            <th>SO</th>
+            <th>Prompt</th>
+            <th>Adiv.</th>
+            <th>TTFT (ms)</th>
+            <th>Tokens/s</th>
+            <th>Tokens totales</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Adivinanza solicitada aparte -->
+  <section>
+    <h2>Adivinanza solicitada <span class="pill">Ejemplo cualitativo</span></h2>
+    <p>
+      Además de las tres adivinanzas de referencia, también se planteó una adivinanza adicional para ver la calidad de las
+      respuestas sin incluir sus datos en las gráficas comparativas.
+    </p>
+    <p style="margin-top:0.4rem;">
+      <strong>Texto:</strong> “¿Qué tiene ojos pero no puede ver, piernas pero no camina, y grita cuando te miras?”
+    </p>
+    <p>
+      Esta adivinanza funciona como muestra extra de razonamiento. La respuesta esperada es un espejo, y se utiliza de
+      forma cualitativa, no en los cálculos de medias.
+    </p>
+  </section>
+
+  <!-- Sección gráficos -->
+  <section>
+    <h2>Gráficas comparativas <span class="pill">Modelos y métricas</span></h2>
+    <p>
+      Las gráficas permiten comparar de un vistazo el comportamiento de cada modelo. Se puede elegir el sistema operativo y
+      los modelos que se quieren incluir.
+    </p>
+
+    <div class="filters">
+      <div class="filter-group">
+        <label for="g-so">Plataforma para las gráficas</label>
+        <select id="g-so">
+          <option value="ALL">macOS y Windows</option>
+          <option value="macOS">Solo macOS</option>
+          <option value="Windows">Solo Windows</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="g-modelos">Modelos incluidos</label>
+        <select id="g-modelos" multiple>
+          <option value="IBM Granite" selected>IBM Granite 4.5 1B</option>
+          <option value="Mistral 7B" selected>Mistral 7B</option>
+          <option value="Qwen 1.8B" selected>Qwen 1.8B</option>
+        </select>
+        <small style="font-size:0.72rem;color:var(--muted);margin-top:0.15rem;">
+          Usar Ctrl (Windows) o Cmd (Mac) para seleccionar varios.
+        </small>
+      </div>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="chart-card">
+        <h3 style="margin:0;font-size:0.98rem;">TTFT (ms) – tiempo al primer token</h3>
+        <div class="chart-container"><canvas id="chart-ttft"></canvas></div>
+        <div class="legend-inline">
+          <span><span class="dot" style="background:var(--mac)"></span>macOS</span>
+          <span><span class="dot" style="background:var(--win)"></span>Windows</span>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3 style="margin:0;font-size:0.98rem;">Tokens por segundo</h3>
+        <div class="chart-container"><canvas id="chart-tps"></canvas></div>
+        <div class="legend-inline">
+          <span><span class="dot" style="background:var(--mac)"></span>macOS</span>
+          <span><span class="dot" style="background:var(--win)"></span>Windows</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-card" style="margin-top:1rem;">
+      <h3 style="margin:0;font-size:0.98rem;">Tokens totales (media por modelo y SO)</h3>
+      <div class="chart-container"><canvas id="chart-tokens"></canvas></div>
+      <div class="legend-inline">
+        <span><span class="dot" style="background:var(--mac)"></span>macOS</span>
+        <span><span class="dot" style="background:var(--win)"></span>Windows</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Resumen final -->
+  <section>
+    <h2>Resumen de conclusiones <span class="pill">Modelo ganador por aspecto</span></h2>
+    <p>
+      A partir de todos los datos recogidos (TTFT, tokens por segundo y consumo total), se destacan los puntos clave sobre
+      los modelos y las plataformas.
+    </p>
+
+    <div class="grid">
+      <div class="chart-card">
+        <h3 style="margin:0 0 0.4rem;font-size:0.98rem;">Ganadores por métrica</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Aspecto</th>
+              <th>Modelo</th>
+              <th>Plataforma</th>
+              <th>Comentario</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>TTFT más bajo</td>
+              <td>Qwen 1.8B</td>
+              <td><span class="tag mac">macOS</span></td>
+              <td>Empieza a responder en torno a 128&nbsp;ms.</td>
+            </tr>
+            <tr>
+              <td>Más tokens por segundo</td>
+              <td>Qwen 1.8B</td>
+              <td><span class="tag mac">macOS</span></td>
+              <td>Aproximadamente 38 tokens por segundo.</td>
+            </tr>
+            <tr>
+              <td>Menor consumo total</td>
+              <td>Qwen 1.8B</td>
+              <td>macOS / Windows</td>
+              <td>Entre 70 y 80 tokens de media por adivinanza.</td>
+            </tr>
+            <tr>
+              <td>Mejor equilibrio velocidad/calidad</td>
+              <td>IBM Granite 4.5 1B</td>
+              <td>macOS</td>
+              <td>TTFT moderado y respuestas claras sin excesivo consumo.</td>
+            </tr>
+            <tr>
+              <td>Mayor creatividad en adivinanzas largas</td>
+              <td>Mistral 7B</td>
+              <td>macOS</td>
+              <td>Usa más tokens pero produce acertijos muy elaborados.</td>
+            </tr>
+            <tr>
+              <td>Plataforma más rápida en general</td>
+              <td>–</td>
+              <td><span class="tag mac">macOS</span></td>
+              <td>Aproximadamente un 10‑15&nbsp;% más rápida que Windows.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="chart-card">
+        <h3 style="margin:0 0 0.4rem;font-size:0.98rem;">Conclusión global</h3>
+        <p style="margin:0 0 0.5rem;font-size:0.9rem;">
+          Qwen 1.8B aparece como el modelo más eficiente: combina el TTFT más bajo con la mayor velocidad de generación y
+          el menor número de tokens consumidos, tanto en macOS como en Windows.
+        </p>
+        <p style="margin:0 0 0.5rem;font-size:0.9rem;">
+          IBM Granite 4.5 1B ofrece un equilibrio sólido entre rapidez y claridad de respuesta, adecuado cuando importa
+          tanto la velocidad como la explicación intermedia.
+        </p>
+        <p style="margin:0;font-size:0.9rem;">
+          Mistral 7B es el modelo más creativo al generar adivinanzas con prompts largos, aunque a costa de más latencia y
+          un consumo de tokens superior. Para uso intensivo y rápido, macOS proporciona mejores tiempos que Windows en los
+          tres modelos.
+        </p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Comparativa de modelos IA local para trabajo con adivinanzas – diciembre 2025.
+</footer>
+
+<script>
+  // Datos base por adivinanza (solo 3 cuantitativas)
+  const rows = [
+    // IBM Granite macOS
+    { modelo:"IBM Granite", so:"macOS", prompt:"Corto", adiv:1, ttft:145, tps:32, tokens:56 },
+    { modelo:"IBM Granite", so:"macOS", prompt:"Corto", adiv:2, ttft:145, tps:32, tokens:68 },
+    { modelo:"IBM Granite", so:"macOS", prompt:"Largo", adiv:3, ttft:187, tps:28, tokens:142 },
+
+    // IBM Granite Windows
+    { modelo:"IBM Granite", so:"Windows", prompt:"Corto", adiv:1, ttft:167, tps:29, tokens:62 },
+    { modelo:"IBM Granite", so:"Windows", prompt:"Corto", adiv:2, ttft:167, tps:29, tokens:74 },
+    { modelo:"IBM Granite", so:"Windows", prompt:"Largo", adiv:3, ttft:211, tps:26, tokens:156 },
+
+    // Mistral macOS
+    { modelo:"Mistral 7B", so:"macOS", prompt:"Corto", adiv:1, ttft:203, tps:18, tokens:89 },
+    { modelo:"Mistral 7B", so:"macOS", prompt:"Corto", adiv:2, ttft:203, tps:18, tokens:95 },
+    { modelo:"Mistral 7B", so:"macOS", prompt:"Largo", adiv:3, ttft:256, tps:15, tokens:267 },
+
+    // Mistral Windows
+    { modelo:"Mistral 7B", so:"Windows", prompt:"Corto", adiv:1, ttft:224, tps:16, tokens:98 },
+    { modelo:"Mistral 7B", so:"Windows", prompt:"Corto", adiv:2, ttft:224, tps:16, tokens:107 },
+    { modelo:"Mistral 7B", so:"Windows", prompt:"Largo", adiv:3, ttft:278, tps:14, tokens:289 },
+
+    // Qwen macOS
+    { modelo:"Qwen 1.8B", so:"macOS", prompt:"Corto", adiv:1, ttft:128, tps:38, tokens:42 },
+    { modelo:"Qwen 1.8B", so:"macOS", prompt:"Corto", adiv:2, ttft:128, tps:38, tokens:51 },
+    { modelo:"Qwen 1.8B", so:"macOS", prompt:"Largo", adiv:3, ttft:156, tps:35, tokens:118 },
+
+    // Qwen Windows
+    { modelo:"Qwen 1.8B", so:"Windows", prompt:"Corto", adiv:1, ttft:142, tps:36, tokens:48 },
+    { modelo:"Qwen 1.8B", so:"Windows", prompt:"Corto", adiv:2, ttft:142, tps:36, tokens:58 },
+    { modelo:"Qwen 1.8B", so:"Windows", prompt:"Largo", adiv:3, ttft:173, tps:33, tokens:126 }
+  ];
+
+  // ---------- TABLA FILTRABLE ----------
+  const fModelo = document.getElementById("f-modelo");
+  const fSO     = document.getElementById("f-so");
+  const fPrompt = document.getElementById("f-prompt");
+  const fAdiv   = document.getElementById("f-adiv");
+  const tbody   = document.querySelector("#tabla-datos tbody");
+
+  function textoAdiv(a) {
+    if (a === 1) return "1 – hierro / carne / acero";
+    if (a === 2) return "2 – cuanto más le quitas…";
+    if (a === 3) return "3 – ciudades / montañas / agua";
+    return a;
+  }
+
+  function renderTabla() {
+    const m = fModelo.value;
+    const so = fSO.value;
+    const p = fPrompt.value;
+    const ad = fAdiv.value === "ALL" ? null : Number(fAdiv.value);
+
+    tbody.innerHTML = "";
+
+    const filtrado = rows.filter(r => {
+      if (m !== "ALL" && r.modelo !== m) return false;
+      if (so !== "ALL" && r.so !== so) return false;
+      if (p !== "ALL" && r.prompt !== p) return false;
+      if (ad && r.adiv !== ad) return false;
+      return true;
+    });
+
+    if (!filtrado.length) {
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.colSpan = 7;
+      td.textContent = "No hay datos para el filtro seleccionado.";
+      td.style.color = "#9ca3af";
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+      return;
+    }
+
+    filtrado.forEach(r => {
+      const tr = document.createElement("tr");
+
+      const tdM = document.createElement("td");
+      tdM.textContent = r.modelo;
+      tr.appendChild(tdM);
+
+      const tdSO = document.createElement("td");
+      tdSO.innerHTML = `<span class="tag ${r.so === "macOS" ? "mac" : "win"}">${r.so}</span>`;
+      tr.appendChild(tdSO);
+
+      const tdP = document.createElement("td");
+      tdP.textContent = r.prompt;
+      tr.appendChild(tdP);
+
+      const tdA = document.createElement("td");
+      tdA.textContent = textoAdiv(r.adiv);
+      tr.appendChild(tdA);
+
+      const tdT = document.createElement("td");
+      tdT.textContent = r.ttft;
+      tr.appendChild(tdT);
+
+      const tdTPS = document.createElement("td");
+      tdTPS.textContent = r.tps;
+      tr.appendChild(tdTPS);
+
+      const tdTok = document.createElement("td");
+      tdTok.textContent = r.tokens;
+      tr.appendChild(tdTok);
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  [fModelo, fSO, fPrompt, fAdiv].forEach(el => el.addEventListener("change", renderTabla));
+
+  // ---------- GRÁFICAS ----------
+  const gSO = document.getElementById("g-so");
+  const gModelos = document.getElementById("g-modelos");
+
+  const ctxTTFT   = document.getElementById("chart-ttft").getContext("2d");
+  const ctxTPS    = document.getElementById("chart-tps").getContext("2d");
+  const ctxTokens = document.getElementById("chart-tokens").getContext("2d");
+
+  let chartTTFT, chartTPS, chartTokens;
+
+  function modelosSeleccionados() {
+    const opts = Array.from(gModelos.options);
+    const sel = opts.filter(o => o.selected).map(o => o.value);
+    return sel.length ? sel : opts.map(o => o.value);
+  }
+
+  function mediasPorModelo(metric) {
+    const soSel = gSO.value;
+    const selModelos = modelosSeleccionados();
+    const grupos = {}; // clave modelo|so
+
+    rows.forEach(r => {
+      if (!selModelos.includes(r.modelo)) return;
+      if (soSel !== "ALL" && r.so !== soSel) return;
+
+      const key = r.modelo + "|" + r.so;
+      if (!grupos[key]) grupos[key] = { modelo:r.modelo, so:r.so, sum:0, count:0 };
+
+      let v = 0;
+      if (metric === "ttft") v = r.ttft;
+      if (metric === "tps") v = r.tps;
+      if (metric === "tokens") v = r.tokens;
+
+      grupos[key].sum += v;
+      grupos[key].count += 1;
+    });
+
+    return Object.values(grupos).map(g => ({
+      modelo: g.modelo,
+      so: g.so,
+      valor: g.sum / g.count
+    }));
+  }
+
+  function construirDataset(metric) {
+    const modelosOrden = ["IBM Granite", "Mistral 7B", "Qwen 1.8B"];
+    const medias = mediasPorModelo(metric);
+
+    const labels = [];
+    const mac = [];
+    const win = [];
+
+    modelosOrden.forEach(m => {
+      const macRow = medias.find(x => x.modelo === m && x.so === "macOS");
+      const winRow = medias.find(x => x.modelo === m && x.so === "Windows");
+      if (macRow || winRow) {
+        labels.push(m);
+        mac.push(macRow ? macRow.valor : null);
+        win.push(winRow ? winRow.valor : null);
+      }
+    });
+
+    return { labels, mac, win };
+  }
+
+  function crearChart(ctx, data, yLabel) {
+    const macColor = getComputedStyle(document.documentElement).getPropertyValue('--mac');
+    const winColor = getComputedStyle(document.documentElement).getPropertyValue('--win');
+
+    return new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: data.labels,
+        datasets: [
+          { label: "macOS", data: data.mac, backgroundColor: macColor },
+          { label: "Windows", data: data.win, backgroundColor: winColor }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => ctx.dataset.label + ": " + ctx.formattedValue + " " + yLabel
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: "#9ca3af" },
+            grid: { display: false }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { color: "#9ca3af" },
+            grid: { color: "rgba(31,41,55,0.8)" }
+          }
+        }
+      }
+    });
+  }
+
+  function renderCharts() {
+    const dTTFT = construirDataset("ttft");
+    const dTPS  = construirDataset("tps");
+    const dTok  = construirDataset("tokens");
+
+    if (chartTTFT) chartTTFT.destroy();
+    if (chartTPS) chartTPS.destroy();
+    if (chartTokens) chartTokens.destroy();
+
+    chartTTFT   = crearChart(ctxTTFT, dTTFT, "ms");
+    chartTPS    = crearChart(ctxTPS, dTPS, "tokens/s");
+    chartTokens = crearChart(ctxTokens, dTok, "tokens");
+  }
+
+  [gSO, gModelos].forEach(el => el.addEventListener("change", renderCharts));
+
+  // Inicializar
+  renderTabla();
+  renderCharts();
+</script>
+</body>
+</html>
