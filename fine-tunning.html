@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemma 3 Fine-Tuning | Carlos González</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #0b0f1a;
+            --bg-card: #161b22;
+            --accent: #60a5fa;
+            --accent-soft: rgba(96, 165, 250, 0.1);
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --border: #30363d;
+            --code-bg: #010409;
+            --success: #3fb950;
+            --warning: #d29922;
+            --danger: #f85149;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.6;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 300px;
+            height: 100vh;
+            background: var(--bg-main);
+            border-right: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 2rem;
+        }
+
+        .sidebar ul { list-style: none; }
+        .sidebar li { margin-bottom: 0.8rem; }
+        .sidebar a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        .sidebar a:hover { color: var(--accent); }
+
+        .main-wrapper { flex: 1; padding: 3rem; display: flex; justify-content: center; }
+        article { max-width: 800px; width: 100%; }
+
+        header { margin-bottom: 4rem; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; font-weight: 700; }
+        .author-tag { color: var(--accent); font-weight: 600; margin-bottom: 2rem; }
+
+        h2 { font-size: 1.6rem; margin: 3rem 0 1.5rem; border-left: 4px solid var(--accent); padding-left: 1rem; }
+        h3 { font-size: 1.2rem; margin: 1.5rem 0 1rem; color: var(--text-primary); }
+        p { margin-bottom: 1rem; color: var(--text-secondary); }
+
+        .alert { padding: 1.2rem; border-radius: 8px; margin: 1.5rem 0; border: 1px solid; }
+        .alert-info { background: var(--accent-soft); border-color: var(--accent); }
+        .alert-warning { background: rgba(210, 153, 34, 0.1); border-color: var(--warning); }
+        .alert-success { background: rgba(63, 185, 80, 0.1); border-color: var(--success); }
+
+        pre {
+            background: var(--code-bg);
+            padding: 1.2rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            margin: 1rem 0;
+        }
+        code { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #d1d5db; }
+
+        .error-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .error-card h4 { color: var(--danger); margin-bottom: 0.5rem; }
+        .sol-text { color: var(--success); font-weight: 600; margin-top: 0.5rem; display: block; }
+
+        footer { margin-top: 5rem; padding: 2rem 0; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); }
+
+        @media (max-width: 900px) { .sidebar { display: none; } }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <h2>Guía Técnica</h2>
+        <ul>
+            <li><a href="#intro">Conceptos Clave</a></li>
+            <li><a href="#paso1">Configuración Shell</a></li>
+            <li><a href="#paso2">Dependencias MLX</a></li>
+            <li><a href="#paso3">Obtención del Modelo</a></li>
+            <li><a href="#paso4">Preparación de Datos</a></li>
+            <li><a href="#paso5">Fase de Entrenamiento</a></li>
+            <li><a href="#paso6">Validación de Resultados</a></li>
+            <li><a href="#errores">Resolución de Problemas</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-wrapper">
+        <article>
+            <header>
+                <h1>Fine-Tuning de Gemma 3-270M</h1>
+                <p class="author-tag">Documentación preparada por Carlos González</p>
+                <p>Guía paso a paso para optimizar el modelo de Google en sistemas Apple Silicon utilizando la librería MLX-LM.</p>
+            </header>
+
+            <section id="intro">
+                <h2>Introducción al Proyecto</h2>
+                <p>Este documento detalla cómo realizar un <strong>ajuste fino (fine-tuning)</strong> sobre el modelo <strong>Gemma 3-270M IT</strong> cuantizado a 4 bits. Utilizaremos el método <strong>LoRA</strong>, que permite entrenar adaptadores ligeros sin modificar los pesos originales del modelo, ahorrando memoria RAM sustancialmente.</p>
+                
+                <div class="alert alert-info">
+                    <strong>Misión:</strong> Transformar el modelo en un tutor especializado para el ciclo de ASIR. Debe reconocer al personaje <strong>Rafa Vadal</strong> como un pescador experto en sostenibilidad marina.
+                </div>
+            </section>
+
+            <section id="paso1">
+                <h2>1. Configuración del Espacio de Trabajo</h2>
+                <p>Primero, gestionamos el gestor de paquetes y el lenguaje base.</p>
+                <pre><code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code></pre>
+                
+                <h3>Ajuste de Variables de Entorno</h3>
+                <pre><code>echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"</code></pre>
+                
+                <h3>Despliegue de Python y Venv</h3>
+                <pre><code>brew update && brew install python@3.11
+mkdir -p mi-finetuning-gemma && cd mi-finetuning-gemma
+/opt/homebrew/bin/python3.11 -m venv .venv
+source .venv/bin/activate</code></pre>
+            </section>
+
+            <section id="paso2">
+                <h2>2. Instalación del Stack de IA</h2>
+                <p>Incorporamos las herramientas de entrenamiento y el cliente de Hugging Face.</p>
+                <pre><code>pip install --upgrade pip
+pip install "mlx-lm[train]" "huggingface_hub[cli]" datasets</code></pre>
+            </section>
+
+            <section id="paso3">
+                <h2>3. Localización de Pesos Base</h2>
+                <p>Bajamos la versión optimizada para MLX desde el repositorio comunitario.</p>
+                <pre><code>mkdir -p models
+hf download mlx-community/gemma-3-270m-it-4bit --local-dir models/gemma-3-270m-it-4bit</code></pre>
+            </section>
+
+            <section id="paso4">
+                <h2>4. Estructuración del Dataset</h2>
+                <p>El modelo aprende mediante ejemplos en formato JSONL. Es vital que cada conversación ocupe una única línea de texto.</p>
+                <div class="alert alert-warning">
+                    <strong>Atención:</strong> Verifica que no existan saltos de línea internos ni filas vacías en el archivo <code>data/train.jsonl</code>.
+                </div>
+                <pre><code>{"messages":[{"role":"system","content":"Eres un asistente..."}, {"role":"user","content":"..."}, {"role":"assistant","content":"..."}]}</code></pre>
+            </section>
+
+            <section id="paso5">
+                <h2>5. Ejecución del Entrenamiento</h2>
+                <p>Lanzamos el script de ajuste indicando los parámetros de iteración y la ruta de los adaptadores.</p>
+                <pre><code>python -m mlx_lm.lora \
+  --model $(pwd)/models/gemma-3-270m-it-4bit \
+  --data ./data \
+  --train \
+  --fine-tune-type lora \
+  --batch-size 4 \
+  --iters 1000 \
+  --learning-rate 1e-4 \
+  --adapter-path ./adapters \
+  --mask-prompt</code></pre>
+            </section>
+
+            <section id="paso6">
+                <h2>6. Testeo y Despliegue</h2>
+                <p>Comprobamos si el modelo ahora identifica correctamente a Rafa Vadal.</p>
+                <pre><code>mlx_lm.generate \
+  --model $(pwd)/models/gemma-3-270m-it-4bit \
+  --adapter-path ./adapters \
+  --max-tokens 150 \
+  --prompt "¿Quién es Rafa Vadal?"</code></pre>
+            </section>
+
+            <section id="errores">
+                <h2>Resolución de Incidencias</h2>
+                
+                <div class="error-card">
+                    <h4>Conflicto de Versión (Python 3.9)</h4>
+                    <p>Causa: MLX no es compatible con versiones antiguas del intérprete.</p>
+                    <span class="sol-text">Solución: Reinstalar el entorno virtual usando Python 3.11 específicamente.</span>
+                </div>
+
+                <div class="error-card">
+                    <h4>Fallo de Validación (Empty Set)</h4>
+                    <p>Causa: Falta el archivo de control de pérdida durante el entrenamiento.</p>
+                    <span class="sol-text">Solución: Ejecutar 'cp data/train.jsonl data/valid.jsonl' para duplicar el set.</span>
+                </div>
+            </section>
+
+            <footer>
+                <p>Enero 2026 | Desarrollado por Carlos González</p>
+                <p>Basado en el framework MLX para Apple Silicon</p>
+            </footer>
+        </article>
+    </div>
+</body>
+</html>
