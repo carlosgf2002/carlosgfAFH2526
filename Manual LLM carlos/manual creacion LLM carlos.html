@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doc: Chef-Bot Local (Mac M-Series)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+        :root {
+            --primary: #2563eb;
+            --surface: #ffffff;
+            --bg: #f3f4f6;
+            --text: #1f2937;
+            --code-bg: #f8fafc;
+            --border: #e2e8f0;
+            --success: #059669;
+            --error: #dc2626;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .paper {
+            background: var(--surface);
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 60px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08);
+        }
+
+        /* Header Moderno */
+        header {
+            margin-bottom: 50px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 10px;
+            color: #111;
+        }
+
+        .meta-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .tag {
+            background: #eff6ff;
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Steps Layout */
+        .step-container {
+            margin-bottom: 40px;
+            padding-left: 20px;
+            border-left: 3px solid var(--border);
+            transition: border-color 0.3s;
+        }
+
+        .step-container:hover {
+            border-color: var(--primary);
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            margin-top: 0;
+            color: #374151;
+            display: flex;
+            align-items: center;
+        }
+
+        .step-number {
+            background: var(--text);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            margin-right: 12px;
+        }
+
+        /* Code Styling */
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            font-size: 0.9rem;
+        }
+        
+        code { font-family: 'Menlo', 'Monaco', monospace; color: #475569; }
+        .cmd { color: #2563eb; font-weight: bold; }
+        .comment { color: #94a3b8; }
+
+        /* Troubleshooting Section */
+        .troubleshooting {
+            background: #fef2f2;
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid #fee2e2;
+        }
+
+        .troubleshooting h2 { color: var(--error); }
+
+        .issue {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--error);
+        }
+
+        .issue-title { font-weight: 600; color: var(--error); display: block; margin-bottom: 5px; }
+        .issue-fix { color: var(--success); font-weight: 500; }
+
+        /* Image */
+        .result-img {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #9ca3af;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="paper">
+        <header>
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; color: #6b7280; margin-bottom: 5px;">Documentación Técnica</p>
+            <h1>Implementación de "Chef-Bot" en Arquitectura Apple Silicon</h1>
+            <p style="color: #4b5563;">Guía de despliegue local para LLMs personalizados utilizando MLX y cuantización.</p>
+            
+            <div class="meta-tags">
+                <span class="tag">Mac Mini M1/M2/M3</span>
+                <span class="tag">Python 3.9</span>
+                <span class="tag">Metal Performance Shaders</span>
+                <span class="tag">Llama.cpp</span>
+            </div>
+        </header>
+
+        <div class="step-container">
+            <h2><span class="step-number">1</span>Configuración del Entorno</h2>
+            <p>Para evitar las incompatibilidades de CUDA en Mac, sustituimos Axolotl por <strong>MLX</strong> (Apple Framework). Compilamos <code>llama.cpp</code> desde la fuente utilizando CMake.</p>
+            <pre><code><span class="comment"># Inicialización del entorno virtual</span>
+<span class="cmd">python3</span> -m venv venv
+<span class="cmd">source</span> venv/bin/activate
+
+<span class="comment"># Instalación de dependencias nativas</span>
+<span class="cmd">pip</span> install mlx-lm
+
+<span class="comment"># Compilación manual con soporte GPU (Metal)</span>
+<span class="cmd">pip</span> install cmake
+<span class="cmd">git</span> clone https://github.com/ggerganov/llama.cpp.git
+<span class="cmd">cd</span> llama.cpp
+<span class="cmd">cmake</span> -B build
+<span class="cmd">cmake</span> --build build --config Release -j</code></pre>
+        </div>
+
+        <div class="step-container">
+            <h2><span class="step-number">2</span>Ingeniería de Datos</h2>
+            <p>Se estructura el dataset en formato <code>JSONL</code>. Es crítico aplicar manualmente los tokens de control de <strong>Phi-3</strong> para garantizar la coherencia sintáctica.</p>
+            <pre><code><span class="comment"># Estructura del archivo data/train.jsonl</span>
+{"text": "<span class="cmd">&lt;|user|&gt;</span>Ingredientes: patatas, huevos.<span class="cmd">&lt;|end|&gt;&lt;|assistant|&gt;</span>Haz una Tortilla de Patatas...<span class="cmd">&lt;|end|&gt;</span>"}</code></pre>
+        </div>
+
+        <div class="step-container">
+            <h2><span class="step-number">3</span>Entrenamiento (Fine-Tuning)</h2>
+            <p>Aplicamos la técnica LoRA (Low-Rank Adaptation) para inyectar conocimiento específico sin reentrenar la red neuronal completa.</p>
+            <pre><code><span class="comment"># Iniciar proceso de aprendizaje</span>
+<span class="cmd">python</span> -m mlx_lm.lora --config config_chef.yaml --train</code></pre>
+        </div>
+
+        <div class="step-container">
+            <h2><span class="step-number">4</span>Fusión y Despliegue</h2>
+            <p>Fase final de ingeniería: fusión de pesos (weights merging) y cuantización a 4 bits para optimizar la inferencia en hardware de consumo.</p>
+            <pre><code><span class="comment"># 1. Unificar Adaptadores con Modelo Base</span>
+<span class="cmd">python</span> -m mlx_lm.fuse --model microsoft/Phi-3-mini-4k-instruct --adapter-path adapters --save-path merged_model
+
+<span class="comment"># 2. Conversión a GGUF (Precisión F16)</span>
+<span class="cmd">python</span> llama.cpp/convert_hf_to_gguf.py merged_model --outfile chef-bot-f16.gguf
+
+<span class="comment"># 3. Cuantización final (q4_k_m)</span>
+<span class="cmd">./llama.cpp/build/bin/llama-quantize</span> chef-bot-f16.gguf chef-bot-q4.gguf q4_k_m</code></pre>
+        </div>
+
+        <div class="troubleshooting">
+            <h2>🛠️ Registro de Incidencias y Soluciones</h2>
+            
+            <div class="issue">
+                <span class="issue-title">Conflicto de Versión: Torch (nightly/cpu)</span>
+                <p>El instalador no encontró distribución compatible para Mac.</p>
+                <span class="issue-fix">Solución: Cambiar a `pip install mlx-lm` y Torch estable.</span>
+            </div>
+
+            <div class="issue">
+                <span class="issue-title">Error de Compilación: Makefile Deprecado</span>
+                <p>El repositorio de llama.cpp ha migrado su sistema de build.</p>
+                <span class="issue-fix">Solución: Instalar CMake y compilar usando `cmake -B build`.</span>
+            </div>
+
+            <div class="issue">
+                <span class="issue-title">Argumentos inválidos en fuse.py</span>
+                <p>La bandera `--config` ya no es soportada en versiones recientes de MLX.</p>
+                <span class="issue-fix">Solución: Usar argumentos explícitos (`--model`, `--adapter-path`).</span>
+            </div>
+
+            <div class="issue">
+                <span class="issue-title">Ruta no encontrada (FileNotFoundError)</span>
+                <p>Los adaptadores se generaron en una subcarpeta incorrecta.</p>
+                <span class="issue-fix">Solución: Ejecutar `mv llama.cpp/adapters .` para corregir la ruta.</span>
+            </div>
+        </div>
+
+        <div style="margin-top: 50px; text-align: center;">
+            <h2 style="justify-content: center;">Resultado de Inferencia</h2>
+            <p>Rendimiento en tiempo real: <strong>39 tokens/segundo</strong>.</p>
+            <img src="LLM.png" alt="Chef Bot Demo" class="result-img">
+            <p style="font-size: 0.8rem; color: #6b7280; margin-top: 10px;">Fig 1. Captura de pantalla en entorno de producción local.</p>
+        </div>
+
+        <footer>
+            Creado por Carlos González &bull; 2026
+        </footer>
+    </div>
+
+</body>
+</html>
