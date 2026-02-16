@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe Técnico: Integración IA Local</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --code-bg: #1e293b;
+            --code-text: #e2e8f0;
+            --success-bg: #dcfce7;
+            --success-text: #166534;
+            --error-bg: #fee2e2;
+            --error-text: #991b1b;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.8;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            padding: 50px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        header {
+            text-align: left;
+            padding-bottom: 40px;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 40px;
+        }
+
+        h1 { 
+            font-family: 'Montserrat', sans-serif;
+            color: var(--secondary-color); 
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+        
+        .author {
+            font-weight: 500;
+            color: var(--text-muted);
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 { 
+            font-family: 'Montserrat', sans-serif;
+            color: var(--primary-color); 
+            font-size: 1.5rem;
+            margin-top: 50px;
+            display: flex;
+            align-items: center;
+        }
+        
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 30px;
+            background-color: var(--primary-color);
+            margin-right: 15px;
+            border-radius: 4px;
+        }
+
+        h3 { 
+            color: var(--text-main); 
+            font-weight: 600;
+            margin-top: 0;
+        }
+
+        .tags {
+            margin-top: 20px;
+        }
+
+        .tag {
+            background-color: #eff6ff;
+            color: var(--primary-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 10px;
+            border: 1px solid #bfdbfe;
+        }
+
+        .card {
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        code {
+            font-family: 'Fira Code', 'Consolas', monospace;
+            background-color: #f1f5f9;
+            color: #d946ef; /* Magenta code highlight */
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.9em;
+            border-left: 5px solid var(--primary-color);
+        }
+
+        pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+
+        .alert-error {
+            background-color: var(--error-bg);
+            color: var(--error-text);
+            border-left: 4px solid var(--error-text);
+        }
+
+        .alert-solution {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+            border-left: 4px solid var(--success-text);
+        }
+
+        .figure {
+            margin-top: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            background: #fafafa;
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+            display: block;
+            opacity: 0.9;
+        }
+
+        .figcaption {
+            padding: 10px;
+            text-align: center;
+            font-size: 0.8em;
+            color: var(--text-muted);
+            background: #f9fafb;
+            border-top: 1px solid var(--border-color);
+            font-style: italic;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 80px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.85em;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Infraestructura IA Local</h1>
+        <div class="author">Desarrollado por: Carlos González Fernández</div>
+        <div class="tags">
+            <span class="tag">#OpenSource</span>
+            <span class="tag">#NodeJS</span>
+            <span class="tag">#Llama3</span>
+        </div>
+    </header>
+
+    <section>
+        <h2>1. Resumen Ejecutivo</h2>
+        <p>Este informe detalla la configuración técnica para desplegar un asistente de programación autónomo que opera en un entorno aislado (offline). El sistema aprovecha la aceleración por hardware (GPU) local, eliminando la dependencia de APIs externas y garantizando la privacidad de los datos.</p>
+        <p><strong>Estructura Técnica:</strong></p>
+        <ul>
+            <li><strong>Backend de Inferencia:</strong> Servidor API local basado en LM Studio (Motor Llama-3).</li>
+            <li><strong>Cliente de Ejecución:</strong> Interfaz OpenCode configurada para interactuar con el sistema de archivos local.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>2. Protocolo de Implementación</h2>
+
+        <div class="card">
+            <h3>Fase 1: Despliegue del Servidor API</h3>
+            <p>Se configuró LM Studio para exponer una interfaz compatible con el estándar de OpenAI, permitiendo la comunicación fluida con clientes de terceros.</p>
+            <ul>
+                <li><strong>LLM Seleccionado:</strong> Meta Llama 3 8B Instruct (Optimizado para código).</li>
+                <li><strong>Endpoint:</strong> <code>127.0.0.1:1234</code>.</li>
+                <li><strong>Políticas de Red:</strong> Cross-Origin Resource Sharing (CORS) habilitado.</li>
+            </ul>
+            <div class="figure">
+                <img src="foto2.png" alt="Dashboard del Servidor">
+                <div class="figcaption">Fig. 1: Monitorización del servidor activo y consumo de VRAM.</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Fase 2: Vinculación del Cliente</h3>
+            <p>Debido a la ausencia del paquete en los registros públicos de NPM, se procedió a una configuración manual del <em>bridge</em> de conexión.</p>
+            <p>Se generó el archivo de configuración <code>~/opencode/opencode.json</code> para redirigir las peticiones hacia el localhost:</p>
+            <pre><code>{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "lmstudio": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "LM Studio Local",
+      "options": {
+        "baseURL": "http://127.0.0.1:1234/v1"
+      },
+      "models": {
+        "modelo-local": {
+          "name": "local-model"
+        }
+      }
+    }
+  }
+}</code></pre>
+        </div>
+    </section>
+
+    <section>
+        <h2>3. Diagnóstico de Incidencias</h2>
+        <p>Durante la fase de staging se detectaron y solventaron las siguientes anomalías:</p>
+
+        <div class="card">
+            <h3>Caso A: Dependencia no resuelta</h3>
+            <div class="alert alert-error">
+                <strong>Fallo:</strong> <code>npm error code E404</code> al ejecutar la instalación global.
+            </div>
+            <div class="alert alert-solution">
+                <strong>Resolución:</strong> Se determinó que el software es propietario o de distribución manual. Se optó por configurar el enlace simbólico directamente sobre la instalación binaria existente.
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Caso B: Conflicto en el System Prompt</h3>
+            <div class="alert alert-error">
+                <strong>Fallo:</strong> El modelo rechazaba su propia naturaleza local, alegando falta de conexión con el host.
+            </div>
+            <p>Se ajustó el <em>System Prompt</em> para eliminar las restricciones de identidad que forzaban al modelo a simular ser un asistente en la nube.</p>
+        </div>
+
+        <div class="card">
+            <h3>Caso C: Restricciones de I/O en macOS</h3>
+            <div class="alert alert-error">
+                <strong>Fallo:</strong> <em>"Permission denied"</em> al intentar escritura en directorio raíz.
+            </div>
+            <div class="alert alert-solution">
+                <strong>Resolución:</strong> Debido al SIP (System Integrity Protection) de macOS, se redefinió el directorio de trabajo mediante prompt natural hacia: <code>/Users/aulaateca26/Desktop</code>.
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>4. Validación Funcional</h2>
+        <p>Tras la rectificación de los permisos y rutas, el agente completó satisfactoriamente el ciclo de vida de desarrollo: generación de lógica, escritura en disco y ejecución de script Python.</p>
+        
+        <div class="figure">
+            <img src="foto1.png" alt="Validación de script">
+            <div class="figcaption">Fig. 2: Script generado y ejecutado sin intervención humana.</div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2024 Carlos González Fernández | Documentación Técnica</p>
+    </footer>
+</div>
+
+</body>
+</html>

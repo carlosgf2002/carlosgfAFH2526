@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe Técnico: Pre-entrenamiento de LLMs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4f46e5; /* Indigo */
+            --secondary-color: #3730a3;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --code-bg: #1e293b;
+            --code-text: #e2e8f0;
+            --highlight: #818cf8;
+            --metric-bg: #eef2ff;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.8;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            padding: 50px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 30px;
+            margin-bottom: 40px;
+        }
+
+        h1 { 
+            font-family: 'Montserrat', sans-serif;
+            color: var(--secondary-color); 
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+        
+        .author {
+            font-weight: 500;
+            color: var(--text-muted);
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .meta-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background-color: var(--metric-bg);
+            color: var(--primary-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            border: 1px solid #c7d2fe;
+        }
+
+        h2 { 
+            font-family: 'Montserrat', sans-serif;
+            color: var(--secondary-color); 
+            font-size: 1.5rem;
+            margin-top: 50px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+        }
+        
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 28px;
+            background-color: var(--primary-color);
+            margin-right: 15px;
+            border-radius: 4px;
+        }
+
+        h3 {
+            color: var(--text-main);
+            font-weight: 700;
+            margin-top: 25px;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+        }
+
+        code {
+            font-family: 'Fira Code', 'Consolas', monospace;
+            background-color: #f1f5f9;
+            color: #d946ef;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.85em;
+            border-left: 5px solid var(--primary-color);
+            margin: 15px 0;
+        }
+
+        .comment { color: #94a3b8; font-style: italic; }
+
+        /* Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .metric-card {
+            background: var(--metric-bg);
+            border: 1px solid #c7d2fe;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .metric-val {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            display: block;
+        }
+
+        .metric-lbl {
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+            border-left: 4px solid;
+        }
+
+        .alert-warning {
+            background-color: #fff7ed;
+            border-color: #f97316;
+            color: #9a3412;
+        }
+
+        /* Images */
+        .figure {
+            margin-top: 25px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            background: #fafafa;
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .figcaption {
+            padding: 12px;
+            text-align: center;
+            font-size: 0.85em;
+            color: var(--text-muted);
+            background: #f8fafc;
+            border-top: 1px solid var(--border-color);
+            font-style: italic;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.85em;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Pre-entrenamiento de LLMs: Implementación</h1>
+        <div class="author">Desarrollado por: Carlos González Fernández</div>
+        <div class="meta-tags">
+            <span class="tag">#PyTorch</span>
+            <span class="tag">#AppleSilicon_MPS</span>
+            <span class="tag">#Transformer</span>
+            <span class="tag">#NanoGPT</span>
+        </div>
+    </header>
+
+    <section>
+        <h2>1. Contexto Arquitectónico</h2>
+        <p>Este informe documenta el proceso de entrenamiento desde cero (<em>from scratch</em>) de un modelo de lenguaje basado en la arquitectura Transformer. El objetivo es validar la capacidad de cómputo local utilizando la API MPS (Metal Performance Shaders) de Apple.</p>
+        
+            </section>
+
+    <section>
+        <h2>2. Procedimiento Técnico</h2>
+        <p>A continuación se detalla el flujo de trabajo ejecutado en la terminal para configurar el entorno de PyTorch y lanzar el bucle de entrenamiento.</p>
+
+        <div class="card">
+            <h3>Fase A: Configuración del Entorno</h3>
+            <p>Se establece un entorno virtual para aislar las dependencias del sistema operativo.</p>
+            <pre><code><span class="comment"># Inicialización del entorno</span>
+mkdir curso-ia-nano && cd curso-ia-nano
+python3 -m venv venv
+source venv/bin/activate
+
+<span class="comment"># Instalación de librerías (PyTorch + NumPy)</span>
+pip install torch numpy</code></pre>
+        </div>
+
+        <div class="card">
+            <h3>Fase B: Ingesta y Entrenamiento</h3>
+            <p>Se descarga el corpus de texto (Don Quijote) y se ejecuta el script de entrenamiento optimizado para hardware Apple Silicon.</p>
+            <pre><code><span class="comment"># Descarga del Dataset (Proyecto Gutenberg)</span>
+curl -L -o quijote.txt https://www.gutenberg.org/files/2000/2000-0.txt
+
+<span class="comment"># Ejecución del Training Loop</span>
+python entrenar_mac.py</code></pre>
+        </div>
+    </section>
+
+    <section>
+        <h2>3. Validación Experimental</h2>
+        <p>El modelo demostró capacidad de aprendizaje reduciendo la función de pérdida (Loss) y generando texto sintácticamente coherente.</p>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <span class="metric-val">4.74</span>
+                <span class="metric-lbl">Loss Inicial</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-val">3.32</span>
+                <span class="metric-lbl">Loss Final</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-val">50 MB</span>
+                <span class="metric-lbl">Peso del Modelo (.pth)</span>
+            </div>
+        </div>
+
+        <div class="figure">
+            <img src="prueba1.png" alt="Gráfica de convergencia">
+            <div class="figcaption">Fig 1. Consola de entrenamiento: Se observa la activación de MPS y la reducción progresiva del error.</div>
+        </div>
+
+        <div class="figure">
+            <img src="prueba2.png" alt="Inferencia de texto">
+            <div class="figcaption">Fig 2. Prueba de Inferencia: Generación de texto basada en los pesos guardados.</div>
+        </div>
+    </section>
+
+    <section>
+        <h2>4. Resolución de Incidencias</h2>
+        <p>Durante el despliegue se identificaron y mitigaron los siguientes comportamientos:</p>
+
+        <div class="alert alert-warning">
+            <strong>⚠️ Dependencia NumPy:</strong> PyTorch emitió advertencias por la ausencia de NumPy en el entorno base. Aunque no es crítico para la ejecución del tensor, se recomienda su instalación para limpiar los logs.
+        </div>
+
+        <div class="alert alert-warning">
+            <strong>⚠️ Serialización del Modelo:</strong> En la primera iteración, el script finalizó sin persistir los datos. Se implementó un script auxiliar <code>guardar_rapido.py</code> para forzar el guardado de los pesos (<code>torch.save</code>) tras un ciclo corto de 50 pasos.
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2024 Carlos González Fernández | Ingeniería de Modelos de Lenguaje</p>
+    </footer>
+</div>
+
+</body>
+</html>
